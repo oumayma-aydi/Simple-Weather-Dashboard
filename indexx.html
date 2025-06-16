@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simple Weather Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #87ceeb;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      padding: 50px;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 350px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .search {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    #city-input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #ddd;
+      border-radius: 4px 0 0 4px;
+      outline: none;
+    }
+    #city-input:focus {
+      border-color: #00aaff;
+    }
+    #search-btn {
+      padding: 10px 20px;
+      background: #00aaff;
+      border: none;
+      color: white;
+      font-weight: bold;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    #search-btn:hover {
+      background: #0077cc;
+    }
+    .weather-result p {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    .hidden {
+      display: none;
+    }
+    .error-message {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Weather Dashboard</h1>
+    <div class="search">
+      <input type="text" id="city-input" placeholder="Enter city name" />
+      <button id="search-btn">Search</button>
+    </div>
+    <div id="weather-result" class="weather-result hidden">
+      <h2 id="city-name"></h2>
+      <p id="description"></p>
+      <p>Temperature: <span id="temperature"></span> °C</p>
+      <p>Humidity: <span id="humidity"></span> %</p>
+      <p>Wind Speed: <span id="wind-speed"></span> m/s</p>
+    </div>
+    <p id="error-message" class="error-message hidden"></p>
+  </div>
+
+  <script>
+    const apiKey = 'b6907d289e10d714a6e88b30761fae22'; // Demo key from openweathermap (limited)
+
+    const cityInput = document.getElementById('city-input');
+    const searchBtn = document.getElementById('search-btn');
+    const weatherResult = document.getElementById('weather-result');
+    const errorMessage = document.getElementById('error-message');
+
+    const cityNameEl = document.getElementById('city-name');
+    const descriptionEl = document.getElementById('description');
+    const temperatureEl = document.getElementById('temperature');
+    const humidityEl = document.getElementById('humidity');
+    const windSpeedEl = document.getElementById('wind-speed');
+
+    async function getWeather(city) {
+      try {
+        errorMessage.classList.add('hidden');
+        weatherResult.classList.add('hidden');
+
+        const url = `https://openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error('City not found');
+        }
+
+        const data = await response.json();
+
+        cityNameEl.textContent = `${data.name}, ${data.sys.country}`;
+        descriptionEl.textContent = data.weather[0].description;
+        temperatureEl.textContent = data.main.temp.toFixed(1);
+        humidityEl.textContent = data.main.humidity;
+        windSpeedEl.textContent = data.wind.speed;
+
+        weatherResult.classList.remove('hidden');
+      } catch (error) {
+        errorMessage.textContent = error.message;
+        errorMessage.classList.remove('hidden');
+      }
+    }
+
+    searchBtn.addEventListener('click', () => {
+      const city = cityInput.value.trim();
+      if (city) {
+        getWeather(city);
+      }
+    });
+
+    cityInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        searchBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>
