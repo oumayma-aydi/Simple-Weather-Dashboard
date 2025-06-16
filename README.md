@@ -1,5 +1,4 @@
 # Simple-Weather-Dashboard
-# Simple Weather Dashboard
 
 A lightweight weather dashboard built with plain HTML, CSS, and JavaScript.  
 It fetches real-time weather data from the OpenWeatherMap API and displays it in a clean, user-friendly interface.
